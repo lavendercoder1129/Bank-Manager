@@ -1,4 +1,24 @@
+import json
+from pathlib import Path
+
 class Bank:
+
+    database = 'data.json'
+    data = []
+
+    try : 
+        if Path(database).exists(): 
+            with open(database) as fs :
+                data = json.loads(fs.read())
+        else :
+            print("File does not exists")
+    except Exception as err :
+        print(f"An unexpected error occured as {err}")
+
+
+
+
+
 
     def createaccount(self):
         pass
