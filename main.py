@@ -86,6 +86,55 @@ class Bank:
                 Bank.__update()
                 print("Amount withdrawn successfully")
 
+    def showdetails(self):
+        accnumber = input("Enter your account number :- ")
+        pin = int(input("Please enter your PIN :- "))
+        userdata = [i for i in Bank.data if i['accountNo.'] == accnumber and i['pin'] == pin ]
+
+        print("\nYour infoformation : \n")
+        for i in userdata[0] :
+            print(f"{i} : {userdata[0][i]}")
+
+    def updatedetails(self) : 
+        accnumber = input("Enter your account number :- ")
+        pin = int(input("Please enter your PIN :- "))
+        userdata = [i for i in Bank.data if i['accountNo.'] == accnumber and i['pin'] == pin ]
+        
+        if userdata == False : 
+            print("Invalid Data") 
+        else : 
+            print("You cannot edit age, account number and balance")
+            print("Enter details to update name, email, pin or leave empty if no change")
+
+            newdata= {
+                "name" : input("Enter your new name or Enter to skip :- "),
+                "email" : input("Enter your new email or Enter to skip :- "),
+                "pin" : input("Enter new Pin or Enter to skip :- ")
+            }
+
+            if newdata['name'] == "" :
+                newdata['name'] = userdata[0]['name']
+            if newdata['email'] == "" :
+                newdata['email'] = userdata[0]['email']
+            if newdata['pin'] == "" :
+                newdata['pin'] = userdata[0]['pin']
+            
+            newdata['age'] = userdata[0]['age']
+            newdata['accountNo.'] = userdata[0]['accountNo.']
+            newdata['balance'] = userdata[0]['balance']
+
+            if type(newdata['pin']) == str : 
+                newdata['pin'] = int(newdata['pin'])
+            
+            for i in newdata : 
+                if newdata[i] == userdata[0][i] :
+                    continue
+                else : 
+                    userdata[0][i] = newdata[i]
+
+            Bank.__update()
+            print("Account information updated Successfully")
+
 
 user = Bank()
 print("Press 1 to create Account")
@@ -104,3 +153,7 @@ elif check == 2 :
     user.depositmoney()
 elif check == 3 : 
     user.withdrawmoney()
+elif check == 4 : 
+    user.showdetails()
+elif check == 5 : 
+    user.updatedetails()
