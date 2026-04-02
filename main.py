@@ -59,7 +59,7 @@ class Bank:
         pin = int(input("Please enter your PIN : "))
         userdata = [i for i in Bank.data if i['accountNo.'] == accnumber and i['pin'] == pin]
 
-        if userdata == False : 
+        if not userdata : 
             print("Data not found. Try again")
         else : 
             amount = int(input("Enter amount to Depoit :- "))
@@ -75,7 +75,7 @@ class Bank:
         pin = int(input("Please enter your PIN :- "))
         userdata = [i for i in Bank.data if i['accountNo.'] == accnumber and i['pin'] == pin ]
 
-        if userdata == False : 
+        if not userdata : 
             print("No data found")
         else : 
             amount = int(input("Enter amount to withdraw :- "))
@@ -91,7 +91,7 @@ class Bank:
         pin = int(input("Please enter your PIN :- "))
         userdata = [i for i in Bank.data if i['accountNo.'] == accnumber and i['pin'] == pin ]
 
-        print("\nYour infoformation : \n")
+        print("\nYour information : \n")
         for i in userdata[0] :
             print(f"{i} : {userdata[0][i]}")
 
@@ -100,7 +100,7 @@ class Bank:
         pin = int(input("Please enter your PIN :- "))
         userdata = [i for i in Bank.data if i['accountNo.'] == accnumber and i['pin'] == pin ]
         
-        if userdata == False : 
+        if not userdata : 
             print("Invalid Data") 
         else : 
             print("You cannot edit age, account number and balance")
@@ -140,7 +140,7 @@ class Bank:
         pin = int(input("Enter your PIN :- "))
         userdata = [i for i in Bank.data if i['accoountNo.'] == accnumber and i['pin'] == pin]
 
-        if userdata == False :
+        if not userdata :
             print("Invalid data")
         else :
             check = input("Press Y to confirm delete account else press n")
@@ -151,6 +151,32 @@ class Bank:
                 Bank.data.pop(index)
                 print("Account deleted successfully")
                 Bank.__update() 
+    
+    def transfermoney(self):
+        sender_accno = input("Enter your account nummber :- ")
+        sender_pin = int(input("Enter your PIN :- "))
+
+        senderdata = [i for i in Bank.data if i['accountNo.'] == sender_accno and i['pin'] == sender_pin]
+
+        if not senderdata :
+            print("Invalid sender details")
+        else :
+            receiver_accno = input("Enter reciever account Number :- ")
+            receiverdata = [i for i in Bank.data if i['accountNo.'] == receiver_accno]
+
+            if not receiverdata : 
+                print("Invalid receiver details")
+            else : 
+                amount = int(input("Enter amount to transfer :- "))
+
+                if amount <= 0 : print("Invalid amount")
+                elif senderdata[0]['balance'] < amount:
+                    print("Insufficient balance")
+                else : 
+                    senderdata[0]['balance'] -= amount
+                    receiverdata[0]['balance'] += amount
+                    Bank.__update()
+                    print("Amount transferred successfully.") 
 
 user = Bank()
 print("Press 1 to Create a new Account.")
@@ -159,6 +185,7 @@ print("Press 3 to Withdraw Money from Account.")
 print("Press 4 to view Account details.")
 print("Press 5 to update Account details.")
 print("Press 6 to delete A1ccount.")
+print("Press 7 to transfer money")
 
 
 check = int(input("Enter your choice :- "))
@@ -175,4 +202,6 @@ elif check == 5 :
     user.updatedetails()
 elif check == 6 : 
     user.deleteaccount()
+elif check == 7 :
+    user.transfermoney()
 else : print("Invalid choice")
