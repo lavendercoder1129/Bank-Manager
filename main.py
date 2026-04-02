@@ -135,17 +135,33 @@ class Bank:
             Bank.__update()
             print("Account information updated Successfully")
 
+    def deleteaccount(self) : 
+        accnumber = input("Enter your account number :- ")
+        pin = int(input("Enter your PIN :- "))
+        userdata = [i for i in Bank.data if i['accoountNo.'] == accnumber and i['pin'] == pin]
+
+        if userdata == False :
+            print("Invalid data")
+        else :
+            check = input("Press Y to confirm delete account else press n")
+            if check == 'n' or check == 'N':
+                print("Deletion cancelled")
+            else : 
+                index = Bank.data.index(userdata[0])
+                Bank.data.pop(index)
+                print("Account deleted successfully")
+                Bank.__update() 
 
 user = Bank()
-print("Press 1 to create Account")
-print("Press 2 to Deposit Money in account")
-print("Press 3 to Withdraw Money from account")
-print("Press 4 to view Account details")
-print("Press 5 to update account details")
-print("Press 6 to delete account")
+print("Press 1 to Create a new Account.")
+print("Press 2 to Deposit Money in Account.")
+print("Press 3 to Withdraw Money from Account.")
+print("Press 4 to view Account details.")
+print("Press 5 to update Account details.")
+print("Press 6 to delete A1ccount.")
 
 
-check = int(input("Enter your choice"))
+check = int(input("Enter your choice :- "))
 
 if check == 1 : 
     user.createaccount()
@@ -157,3 +173,6 @@ elif check == 4 :
     user.showdetails()
 elif check == 5 : 
     user.updatedetails()
+elif check == 6 : 
+    user.deleteaccount()
+else : print("Invalid choice")
