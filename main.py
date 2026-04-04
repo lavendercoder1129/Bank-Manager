@@ -138,7 +138,7 @@ class Bank:
     def deleteaccount(self) : 
         accnumber = input("Enter your account number :- ")
         pin = int(input("Enter your PIN :- "))
-        userdata = [i for i in Bank.data if i['accoountNo.'] == accnumber and i['pin'] == pin]
+        userdata = [i for i in Bank.data if i['accountNo.'] == accnumber and i['pin'] == pin]
 
         if not userdata :
             print("Invalid data")
