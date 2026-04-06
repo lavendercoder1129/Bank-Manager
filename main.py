@@ -178,30 +178,32 @@ class Bank:
                     Bank.__update()
                     print("Amount transferred successfully.") 
 
-user = Bank()
-print("Press 1 to Create a new Account.")
-print("Press 2 to Deposit Money in Account.")
-print("Press 3 to Withdraw Money from Account.")
-print("Press 4 to view Account details.")
-print("Press 5 to update Account details.")
-print("Press 6 to delete A1ccount.")
-print("Press 7 to transfer money")
+
+if __name__ == '__main__' :
+    user = Bank()
+    print("Press 1 to Create a new Account.")
+    print("Press 2 to Deposit Money in Account.")
+    print("Press 3 to Withdraw Money from Account.")
+    print("Press 4 to view Account details.")
+    print("Press 5 to update Account details.")
+    print("Press 6 to delete A1ccount.")
+    print("Press 7 to transfer money")
 
 
-check = int(input("Enter your choice :- "))
+    check = int(input("Enter your choice :- "))
 
-if check == 1 : 
-    user.createaccount()
-elif check == 2 : 
-    user.depositmoney()
-elif check == 3 : 
-    user.withdrawmoney()
-elif check == 4 : 
-    user.showdetails()
-elif check == 5 : 
-    user.updatedetails()
-elif check == 6 : 
-    user.deleteaccount()
-elif check == 7 :
-    user.transfermoney()
-else : print("Invalid choice")
+    if check == 1 : 
+        user.createaccount()
+    elif check == 2 : 
+        user.depositmoney()
+    elif check == 3 : 
+        user.withdrawmoney()
+    elif check == 4 : 
+        user.showdetails()
+    elif check == 5 : 
+        user.updatedetails()
+    elif check == 6 : 
+        user.deleteaccount()
+    elif check == 7 :
+        user.transfermoney()
+    else : print("Invalid choice")
