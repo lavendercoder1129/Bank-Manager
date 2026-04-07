@@ -1,5 +1,7 @@
 import streamlit as st
 import builtins
+import io
+import sys
 from main import Bank
 
 # Initialize
@@ -19,20 +21,45 @@ menu = st.sidebar.radio("Select Operation", [
     "Transfer Money"
 ])
 
+
+# ---------------- INPUT HANDLER FUNCTION ----------------
+def handle_operation(func, inputs, success_msg, show_output=True):
+    success, output = run_with_inputs(func, inputs)
+
+    if not success:
+        st.error(f"Error: {output}")
+        return
+
+    output_lower = output.lower()
+
+    if "successfully" in output_lower:
+        st.success(success_msg)
+        
+        if show_output:
+            st.code(output)   
+    else:
+        st.error(output)
+
 # ---------------- INPUT OVERRIDE FUNCTION ----------------
 def run_with_inputs(func, inputs_list):
     original_input = builtins.input
-    inputs = iter(inputs_list)
+    original_stdout = sys.stdout
 
+    inputs = iter(inputs_list)
     builtins.input = lambda _: next(inputs)
+
+    captured_output = io.StringIO()
+    sys.stdout = captured_output
 
     try:
         func()
-        st.success("Operation executed successfully ✅")
+        output = captured_output.getvalue()
+        return True, output   # ✅ success
     except Exception as e:
-        st.error(f"Error: {e}")
+        return False, str(e)  # ❌ error
     finally:
         builtins.input = original_input
+        sys.stdout = original_stdout
 
 
 # ---------------- CREATE ACCOUNT ----------------
@@ -45,12 +72,15 @@ if menu == "Create Account":
     pin = st.text_input("4-digit PIN")
 
     if st.button("Create Account"):
-        if name and email and pin:
-            run_with_inputs(user.createaccount, [
-                name, str(age), email, pin
-            ])
+        if not pin.isdigit() or len(pin) != 4:
+            st.error("PIN must be exactly 4 digits")
         else:
-            st.warning("Please fill all fields")
+            handle_operation(
+                user.createaccount,
+                [name, str(age), email, pin],
+                "Account Created Successfully ✅",
+                show_output=True
+            )
 
 
 # ---------------- DEPOSIT ----------------
@@ -62,9 +92,11 @@ elif menu == "Deposit Money":
     amount = st.number_input("Amount", min_value=1)
 
     if st.button("Deposit"):
-        run_with_inputs(user.depositmoney, [
-            acc, pin, str(amount)
-        ])
+        handle_operation(
+            user.depositmoney,
+            [acc, pin, str(amount)],
+            "Deposit Successful ✅"
+        )
 
 
 # ---------------- WITHDRAW ----------------
@@ -73,12 +105,24 @@ elif menu == "Withdraw Money":
 
     acc = st.text_input("Account Number")
     pin = st.text_input("PIN")
-    amount = st.number_input("Amount", min_value=1)
+    amount = st.number_input("Amount", min_value=0)
 
     if st.button("Withdraw"):
-        run_with_inputs(user.withdrawmoney, [
-            acc, pin, str(amount)
-        ])
+        try:
+            amt = int(amount)
+        except:
+            st.error("Invalid amount input")
+            st.stop()
+
+        if amt <= 0:
+            st.error("Amount must be greater than 0")
+            st.stop()   # 🚫 stops execution completely
+
+        handle_operation(
+            user.withdrawmoney,
+            [acc, pin, str(amt)],
+            "Withdrawal Successful ✅"
+        )
 
 
 # ---------------- SHOW DETAILS ----------------
@@ -89,10 +133,12 @@ elif menu == "Show Details":
     pin = st.text_input("PIN")
 
     if st.button("Show Details"):
-        run_with_inputs(user.showdetails, [
-            acc, pin
-        ])
-        st.info("ℹ️ Output is printed in terminal")
+        success, output = run_with_inputs(user.showdetails, [acc, pin])
+
+        if not success:
+            st.error(output)
+        else:
+            st.code(output)
 
 
 # ---------------- UPDATE ----------------
@@ -106,10 +152,12 @@ elif menu == "Update Details":
     new_pin = st.text_input("New PIN (optional)")
 
     if st.button("Update"):
-        run_with_inputs(user.updatedetails, [
-            acc, pin, name, email, new_pin
-        ])
-
+        handle_operation(
+            user.updatedetails,
+            [acc, pin, name, email, new_pin],
+            "Details Updated ✅",
+            show_output=False   # 👈 hides bottom block
+        )
 
 # ---------------- DELETE ----------------
 elif menu == "Delete Account":
@@ -120,10 +168,12 @@ elif menu == "Delete Account":
     confirm = st.selectbox("Confirm Delete", ["n", "Y"])
 
     if st.button("Delete"):
-        run_with_inputs(user.deleteaccount, [
-            acc, pin, confirm
-        ])
-
+        handle_operation(
+            user.deleteaccount,
+            [acc, pin, confirm],
+            "Account Deleted ✅",
+            show_output=False
+        )
 
 # ---------------- TRANSFER ----------------
 elif menu == "Transfer Money":
@@ -132,9 +182,11 @@ elif menu == "Transfer Money":
     sender = st.text_input("Sender Account")
     pin = st.text_input("Sender PIN")
     receiver = st.text_input("Receiver Account")
-    amount = st.number_input("Amount", min_value=1)
+    amount = st.number_input("Amount", min_value=0)
 
     if st.button("Transfer"):
-        run_with_inputs(user.transfermoney, [
-            sender, pin, receiver, str(amount)
-        ])
+        handle_operation(
+            user.transfermoney,
+            [sender, pin, receiver, str(amount)],
+            "Transfer Successful ✅"
+        )
